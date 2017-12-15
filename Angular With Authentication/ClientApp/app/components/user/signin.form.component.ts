@@ -27,7 +27,7 @@ export class SigninFormComponent implements OnInit {
     }
 
     forgotPassword($event: Event): boolean {
-        $event.stopPropagation();
+        $event.preventDefault();
 
         this.forgotpassword.emit();
 

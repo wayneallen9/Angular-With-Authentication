@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { CollapseModule } from 'ngx-bootstrap';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
@@ -54,6 +55,7 @@ import { RecaptchaDirective } from './directives/recaptcha.directive';
     imports: [
         AppAuthModule,
         AppRoutingModule,
+        CollapseModule.forRoot(),
         CommonModule,
         HttpModule,
         ModalModule.forRoot(),

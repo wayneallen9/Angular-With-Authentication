@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from '../../services/user.service';
 
@@ -8,6 +8,7 @@ import { UserService } from '../../services/user.service';
     styleUrls: ['./navmenu.component.css']
 })
 export class NavMenuComponent {
+    isCollapsed = true;
     isExternal = false;
     isSignedIn = false;
     @Output() showSignIn = new EventEmitter();
@@ -20,6 +21,11 @@ export class NavMenuComponent {
         userService.isSignedIn.subscribe((value: boolean) => {
             this.isSignedIn = value;
         });
+    }
+
+    @HostListener('document:click')
+    click():void {
+        this.isCollapsed = true;
     }
 
     signIn($event: Event):boolean {
@@ -38,6 +44,17 @@ export class NavMenuComponent {
 
         // return to the home page
         this.router.navigate(["home"]);
+
+        return false;
+    }
+
+    toggle($event: Event): boolean {
+        // prevent propogation
+        $event.preventDefault();
+        $event.stopPropagation();
+
+        // toggle the state
+        this.isCollapsed = !this.isCollapsed;
 
         return false;
     }

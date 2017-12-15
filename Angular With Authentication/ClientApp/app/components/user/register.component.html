@@ -1,0 +1,30 @@
+﻿<div class="container-fluid">
+    <h2>Sign Up</h2>
+    <form [formGroup]="registerForm" (ngSubmit)="submit(registerForm)">
+        <div class="form-group" *ngIf="error">
+            <div class="alert alert-danger" [innerHtml]="error"></div>
+        </div>
+        <div class="form-group" [ngClass]="{ 'has-error':registerForm.controls.email.invalid && registerForm.controls.email.dirty }">
+            <label class="control-label" for="email">Your email address</label>
+            <input class="form-control" [ngClass]="{ 'ajax':registerForm.get('email').status === 'PENDING'}" #email formControlName="email" placeholder="Your email address" type="email" />
+            <small class="text-danger" *ngIf="registerForm.get('email').errors && registerForm.get('email').errors.emailNotUnique">Email address has already been registered</small>
+        </div>
+        <div class="form-group" formGroupName="passwords" [ngClass]="{ 'has-error':registerForm.controls.passwords.controls.password.invalid && registerForm.controls.passwords.controls.password.dirty }">
+            <label class="control-label" for="password">Password</label>
+            <input class="form-control" formControlName="password" #password placeholder="Password" type="password" />
+            <small>Minimum 6 characters</small>
+        </div>
+        <div class="form-group" formGroupName="passwords" [ngClass]="{ 'has-error':registerForm.controls.passwords.dirty && registerForm.controls.passwords.invalid }">
+            <label class="control-label" for="confirm">Repeat password</label>
+            <input class="form-control" formControlName="confirm" #confirm placeholder="Repeat password" type="password" />
+            <small class="has-error" *ngIf="registerForm.controls.passwords.dirty && registerForm.controls.passwords.invalid">Passwords do not match</small>
+        </div>
+        <div class="form-group">
+            <div [recaptcha]="recaptchaKey" (recaptchaed)="recaptchaed($event)"></div>
+            <input class="invisible" formControlName="recaptcha" />
+        </div>
+        <div class="form-group-sm text-center">
+            <button class="btn btn-default" [disabled]="registerForm.invalid || registerForm.pending || submitting" [ngClass]="{ 'ajax':submitting }" type="submit">Register</button>
+        </div>
+    </form>
+</div>

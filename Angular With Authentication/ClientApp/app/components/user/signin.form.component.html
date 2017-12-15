@@ -1,0 +1,20 @@
+﻿<form [formGroup]="signInForm" (ngSubmit)="submit(signInForm)">
+    <div class="form-group" *ngIf="error">
+        <div class="alert alert-danger">An unknown error occurred.  Please try again later.</div>
+    </div>
+    <div class="form-group" *ngIf="unknown">
+        <div class="alert alert-danger">Unknown email address or password</div>
+    </div>
+    <div class="form-group" [ngClass]="{ 'has-error':signInForm.controls.email.invalid && signInForm.controls.email.dirty }">
+        <label class="control-label" for="email">Your email address</label>
+        <input class="form-control" #email formControlName="email" placeholder="Your email address" type="email" />
+    </div>
+    <div class="form-group" [ngClass]="{ 'has-error':signInForm.controls.password.invalid && signInForm.controls.password.dirty }">
+        <label class="control-label" for="password">Password</label>
+        <input class="form-control" formControlName="password" #password placeholder="Your password" type="password" />
+        <small><a (click)="forgotPassword($event)" href="">Forgot your password?</a></small>
+    </div>
+    <div class="form-group text-center">
+        <button class="btn btn-default" [disabled]="signInForm.invalid || signInForm.pending || submitting" [ngClass]="{ 'ajax':submitting }" type="submit">Sign In</button>
+    </div>
+</form>

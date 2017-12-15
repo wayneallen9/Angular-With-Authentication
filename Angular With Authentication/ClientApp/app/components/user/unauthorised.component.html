@@ -1,0 +1,32 @@
+﻿<div class="container-fluid">
+    <div class="row">
+        <div class="col-xs-12">
+            <h2>You need to be logged in to continue</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-xs-12">
+                    <h4 class="hidden-xs hidden-sm">Already have an account?</h4>
+                    <signin (forgotpassword)="forgotPassword()" (signedin)="continue()"></signin>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <external></external>
+                </div>
+            </div>
+            <div class="hidden-md hidden-lg row">
+                <div class="col-xs-12 text-center">
+                    <hr />
+                    <a [routerLink]="['/register']" href="">New here?  Sign up</a>
+                </div>
+            </div>
+        </div>
+        <div class="hidden-xs hidden-sm col-md-6">
+            <h4>New here?  Sign up</h4>
+            <register class="hidden-xs hidden-sm" [id]="'recaptcha-unauthorised'" (signedin)="confirm(user)"></register>
+        </div>
+    </div>
+</div>

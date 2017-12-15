@@ -1,0 +1,24 @@
+﻿<div class="container-fluid">
+    <h2>Forgot your password?</h2>
+    <form [formGroup]="forgotForm" (ngSubmit)="submit(forgotForm)">
+        <div class="form-group" *ngIf="error">
+            <div class="alert alert-danger">{{ error }}</div>
+        </div>
+        <div class="form-group" *ngIf="resent">
+            <div class="alert alert-success">
+                An email has been sent to your email address.  Please follow the instructions in the email to reset your password. 
+            </div>
+        </div>
+        <div class="form-group" [ngClass]="{ 'has-error':forgotForm.controls.email.invalid && forgotForm.controls.email.dirty }">
+            <label class="control-label" for="email">Your email address</label>
+            <input class="form-control" [ngClass]="{ 'ajax':forgotForm.get('email').status === 'PENDING'}" #email formControlName="email" placeholder="Your email address" type="email" />
+        </div>
+        <div class="form-group">
+            <div [recaptcha]="recaptchaKey" (recaptchaed)="recaptchaed($event)"></div>
+            <input class="invisible" formControlName="recaptcha" />
+        </div>
+        <div class="form-group-sm text-center">
+            <button class="btn btn-default" [disabled]="forgotForm.invalid  || submitting" [ngClass]="{ 'ajax':submitting }" type="submit">Reset</button>
+        </div>
+    </form>
+</div>

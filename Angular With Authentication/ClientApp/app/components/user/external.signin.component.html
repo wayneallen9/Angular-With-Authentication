@@ -1,0 +1,5 @@
+﻿<form action="/api/Users/ExternalSignIn" [formGroup]="externalSignInForm" method="post" (ngSubmit)="submit($event)">
+    <input type="hidden" formControlName="id" name="id" />
+    <input type="hidden" formControlName="returnUrl" name="returnUrl" />
+    <button (click)="setProvider('Facebook')" type="submit">Facebook</button>
+</form>

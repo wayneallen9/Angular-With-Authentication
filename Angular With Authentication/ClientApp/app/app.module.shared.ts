@@ -62,6 +62,7 @@ import { RecaptchaDirective } from './directives/recaptcha.directive';
         ReactiveFormsModule
     ],
     providers: [
+        { provide:'LOCALSTORAGE', useFactory: getLocalStorage },
         RecaptchaService,
         RegisteredGuardService,
         SignedInGuardService,
@@ -70,4 +71,8 @@ import { RecaptchaDirective } from './directives/recaptcha.directive';
     ]
 })
 export class AppModuleShared {
+}
+
+export function getLocalStorage() {
+    return (typeof window !== "undefined") ? window.localStorage : null;
 }

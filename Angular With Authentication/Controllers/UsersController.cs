@@ -32,7 +32,12 @@ namespace Angular_With_Authentication.Controllers
             _recaptchaService = recaptchaService;
         }
 
-
+        /// <summary>
+        /// The user wants to log in with an external provider.
+        /// </summary>
+        /// <param name="id">The id of the external provider to use.</param>
+        /// <param name="returnUrl">The route url to return to after successful external authentication.</param>
+        /// <returns>A <see cref="ChallengeResult"></see> object for the external provider authentication.</returns>
         [HttpPost]
         public IActionResult ExternalSignIn(string id, string returnUrl)
         {
@@ -114,17 +119,19 @@ namespace Angular_With_Authentication.Controllers
             var user = await _userManager.FindByEmailAsync(email);
             
             // return the user
-            return new OkObjectResult(Mapper.Map<Models.UserModel>(user));
+            return Ok(Mapper.Map<Models.UserModel>(user));
         }
 
-        [Authorize]
         [HttpPost]
         public async Task<IActionResult> GetCurrent()
         {
+            // has the user authenticated?
+            if (!User.Identity.IsAuthenticated) return Ok();
+
             // get the current user
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
 
-            return new OkObjectResult(Mapper.Map<Models.UserModel>(user));
+            return Ok(Mapper.Map<Models.UserModel>(user));
         }
 
         [HttpPost]

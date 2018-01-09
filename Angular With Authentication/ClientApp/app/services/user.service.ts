@@ -1,7 +1,9 @@
-﻿import { ChangePasswordModel } from '../models/ChangePasswordModel';
+﻿import { AuthHttp, tokenNotExpired } from 'angular2-jwt';
+import { ChangePasswordModel } from '../models/ChangePasswordModel';
 import { DOCUMENT } from '@angular/platform-browser';
-import { Inject, Injectable } from '@angular/core';
-import { Http, Response } from '@angular/http';
+import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { Headers, Http, RequestOptionsArgs, Response } from '@angular/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { NewPasswordModel } from '../models/NewPasswordModel';
 import { RegisterUserModel } from '../models/RegisterUserModel';
@@ -12,7 +14,7 @@ import { UserModel } from '../models/UserModel';
 
 @Injectable()
 export class UserService {
-    constructor(@Inject(DOCUMENT) private document:any, private http: Http, @Inject('BASE_URL') private baseUrl: string) {}
+    constructor(@Inject(DOCUMENT) private document:any, private http: AuthHttp, @Inject('BASE_URL') private baseUrl: string, @Inject('LOCALSTORAGE') private localStorage:any, @Inject(PLATFORM_ID) private platformId: any) {}
 
     email: string|null;
     isEmailConfirmed = new BehaviorSubject<boolean>(false);
@@ -25,26 +27,17 @@ export class UserService {
         });
     }
 
-    external(token: string): Observable<UserModel> {
+    external(token: string): Observable<UserModel | null> {
         // save the token
         this.saveJwtToken(token);
 
         // now request the user details
         return this.http.post(`${this.baseUrl}api/Users/GetCurrent`, null).map((response: Response) => {
-            // get the user details
-            var user = response.json() as UserModel;
-
-            // set the service properties
-            this.email = user.email;
-            this.isEmailConfirmed.next(true);
-            this.isExternal.next(true);
-            this.isSignedIn.next(true);
-
-            return user;
+            return this.setUpCurrentUser(response);
         });
     }
 
-    get(email: string): Observable<UserModel | null> {
+    getByEmail(email: string): Observable<UserModel | null> {
         return this.http.get(`${this.baseUrl}api/Users/GetByEmail`, {
             params: {
                 "email": email
@@ -52,6 +45,16 @@ export class UserService {
         }).map((response: Response) => {
             // were we able to get?
             return response.ok ? response.json() as UserModel : null;
+        });
+    }
+
+    getCurrent(): Observable<UserModel | null> {
+        // if the token has expired, return null
+        if (!tokenNotExpired()) return new BehaviorSubject<UserModel | null>(null);
+
+        // has the token expired?
+        return this.http.post(`${this.baseUrl}api/Users/GetCurrent`, null).map((response: Response) => {
+            return this.setUpCurrentUser(response);
         });
     }
 
@@ -68,18 +71,34 @@ export class UserService {
         });
     }
 
-    register(model: RegisterUserModel): Observable<UserModel> {
+    register(model: RegisterUserModel): Observable<UserModel | null> {
         return this.http.post(`${this.baseUrl}api/Users/Register`, model).map((response: Response) => {
+            // set up the current user from the server response
+            return this.setUpCurrentUser(response);
+        });
+    }
+
+    private setUpCurrentUser(response: Response): UserModel | null {
+        // was a response returned?
+        if (response.text()) {
             // get the user details
             const user = response.json() as UserModel;
 
             // set the service properties
             this.email = user.email;
-            this.isEmailConfirmed.next(false);
+            this.isEmailConfirmed.next(user.emailConfirmed);
+            this.isExternal.next(user.isExternal);
             this.isSignedIn.next(true);
 
-            return response.json();
-        });
+            return user;
+        } else {
+            this.email = null;
+            this.isEmailConfirmed.next(false);
+            this.isExternal.next(false);
+            this.isSignedIn.next(false);
+
+            return null;
+        }
     }
 
     resendEmailConfirmation(model: ResendConfirmationEmailModel): Observable<boolean> {
@@ -96,9 +115,12 @@ export class UserService {
         return response.headers!.get("X-jwt")!;
     }
 
-    private saveJwtToken(token:string) {
-        // save the token in local storage
-        localStorage.setItem("token", token);
+    saveJwtToken(token: string) {
+        // only do token management on the browser
+        if (isPlatformBrowser(this.platformId)) {
+            // save the token in local storage
+            this.localStorage.setItem("token", token);
+        }
     }
 
     signIn(model: SignInUserModel): Observable<UserModel | null> {
@@ -134,7 +156,10 @@ export class UserService {
         this.isExternal.next(false);
         this.isSignedIn.next(false);
 
-        // delete the token
-        localStorage.removeItem("token");
+        // only do token management on the browser
+        if (isPlatformBrowser(this.platformId)) {
+            // delete the token
+            this.localStorage.removeItem("token");
+        }
     }
 }

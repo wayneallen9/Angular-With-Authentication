@@ -85,7 +85,7 @@ export class RegisterComponent implements OnInit {
     }
 
     private validateEmailUnique(control: AbstractControl) {
-        return this.userService.get(control.value).map((response) => {
+        return this.userService.getByEmail(control.value).map((response) => {
             return response ? { emailNotUnique: true } : null;
         });
     }

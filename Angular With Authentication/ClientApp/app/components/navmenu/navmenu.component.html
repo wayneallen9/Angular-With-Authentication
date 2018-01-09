@@ -33,7 +33,7 @@
                     </a>
                 </li>
                 <li *ngIf="!isSignedIn" [routerLinkActive]="['link-active']">
-                    <a [routerLink]="['/signin']">
+                    <a [routerLink]="['/signin']" [queryParams]="{ return:'/home'}">
                         <span class="glyphicon glyphicon-log-in"></span> Sign in
                     </a>
                 </li>

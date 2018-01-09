@@ -3,7 +3,6 @@ import { CollapseModule } from 'ngx-bootstrap';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
-import { ModalModule } from 'ngx-bootstrap';
 import { RouterModule } from '@angular/router';
 
 import { AppAuthModule } from './app.module.auth';
@@ -22,6 +21,7 @@ import { FetchDataComponent } from './components/fetchdata/fetchdata.component';
 import { CounterComponent } from './components/counter/counter.component';
 import { NewPasswordComponent } from './components/user/new.password.component';
 import { RegisterComponent } from './components/user/register.component';
+import { SigninComponent } from './components/user/signin.component';
 import { SigninFormComponent } from './components/user/signin.form.component';
 import { UnauthorisedComponent } from './components/user/unauthorised.component';
 
@@ -49,6 +49,7 @@ import { RecaptchaDirective } from './directives/recaptcha.directive';
         HomeComponent,
         NewPasswordComponent,
         RegisterComponent,
+        SigninComponent,
         SigninFormComponent,
         UnauthorisedComponent
     ],
@@ -58,7 +59,6 @@ import { RecaptchaDirective } from './directives/recaptcha.directive';
         CollapseModule.forRoot(),
         CommonModule,
         HttpModule,
-        ModalModule.forRoot(),
         ReactiveFormsModule
     ],
     providers: [

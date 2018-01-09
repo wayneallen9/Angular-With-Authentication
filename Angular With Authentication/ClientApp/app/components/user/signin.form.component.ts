@@ -12,7 +12,6 @@ import { UserService } from '../../services/user.service';
 })
 export class SigninFormComponent implements OnInit {
     error = false;
-    @Output() forgotpassword = new EventEmitter();
     @Output() signedin = new EventEmitter<UserModel>();
     signInForm: FormGroup;
     submitting = false;
@@ -24,14 +23,6 @@ export class SigninFormComponent implements OnInit {
             email: new FormControl('', [Validators.email, Validators.required]),
             password: new FormControl('', [Validators.required])
         });
-    }
-
-    forgotPassword($event: Event): boolean {
-        $event.preventDefault();
-
-        this.forgotpassword.emit();
-
-        return false;
     }
 
     private resetForm(): void {

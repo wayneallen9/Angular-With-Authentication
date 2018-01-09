@@ -11,7 +11,6 @@ export class NavMenuComponent {
     isCollapsed = true;
     isExternal = false;
     isSignedIn = false;
-    @Output() showSignIn = new EventEmitter();
 
     constructor(private userService: UserService, private router: Router) {
         userService.isExternal.subscribe((value: boolean) => {
@@ -26,14 +25,6 @@ export class NavMenuComponent {
     @HostListener('document:click')
     click():void {
         this.isCollapsed = true;
-    }
-
-    signIn($event: Event):boolean {
-        $event.preventDefault();
-
-        this.showSignIn.emit();
-
-        return false;
     }
 
     signOut($event:Event): boolean {

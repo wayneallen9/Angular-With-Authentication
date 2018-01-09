@@ -7,7 +7,7 @@ import { UserService } from '../../services/user.service';
     templateUrl: './account.component.html'
 })
 export class AccountComponent implements OnInit {
-    error = false;
+    error: string | null;
     changed = false;
     changePasswordForm: FormGroup;
     submitting = false;
@@ -30,7 +30,7 @@ export class AccountComponent implements OnInit {
 
         // set the flags
         this.changed = false;
-        this.error = false;
+        this.error = null;
         this.submitting = true;
 
         // now make the change
@@ -39,7 +39,7 @@ export class AccountComponent implements OnInit {
             oldPassword: this.changePasswordForm.get("oldPassword")!.value
         }).subscribe((response: string | null) => {
             if (response) {
-                this.error = true;
+                this.error = "An unexpected error occurred.  Please try again later.";
             } else {
                 this.changed = true;
             }
@@ -47,8 +47,12 @@ export class AccountComponent implements OnInit {
             // reset the form
             this.changePasswordForm.reset();
             this.submitting = false;
-        }, error => {
-            this.error = true;
+        }, (error: Response) => {
+            if (error.status === 400) {
+                this.error = "Current password incorrect.";
+            } else {
+                this.error = "An unexpected error occurred.  Please try again later.";
+            }
 
             // reset the form
             this.changePasswordForm.reset();

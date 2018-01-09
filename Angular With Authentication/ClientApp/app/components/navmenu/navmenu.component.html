@@ -33,7 +33,7 @@
                     </a>
                 </li>
                 <li *ngIf="!isSignedIn" [routerLinkActive]="['link-active']">
-                    <a (click)="signIn($event)" href="">
+                    <a [routerLink]="['/signin']">
                         <span class="glyphicon glyphicon-log-in"></span> Sign in
                     </a>
                 </li>

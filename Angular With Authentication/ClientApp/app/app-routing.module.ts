@@ -14,6 +14,7 @@ import { CounterComponent } from './components/counter/counter.component';
 import { FetchDataComponent } from './components/fetchdata/fetchdata.component';
 import { NewPasswordComponent } from './components/user/new.password.component';
 import { RegisterComponent } from './components/user/register.component';
+import { SigninComponent } from './components/user/signin.component';
 import { UnauthorisedComponent } from './components/user/unauthorised.component';
 
 const appRoutes: Routes = [
@@ -27,6 +28,7 @@ const appRoutes: Routes = [
     { path: 'fetch-data', component: FetchDataComponent, canActivate: [SignedInGuardService] },
     { path: 'newpassword', component: NewPasswordComponent },
     { path: 'register', component: RegisterComponent },
+    { path: 'signin', component: SigninComponent },
     { path: 'unauthorised', component: UnauthorisedComponent },
     { path: 'confirm', component: ConfirmComponent, canActivate: [RegisteredGuardService] },
     { path: '**', redirectTo: 'home' }

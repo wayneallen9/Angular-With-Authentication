@@ -40,6 +40,7 @@
     <None Remove="ClientApp\app\components\user\external.signedin.component.ts" />
     <None Remove="ClientApp\app\components\user\external.signin.component.ts" />
     <None Remove="ClientApp\app\components\user\forgot.component.ts" />
+    <None Remove="ClientApp\app\components\user\signin.component.ts" />
     <None Remove="ClientApp\app\directives\recaptcha.directive.ts" />
     <None Remove="ClientApp\app\services\script.loader.service.ts" />
   </ItemGroup>
@@ -54,6 +55,7 @@
     <TypeScriptCompile Include="ClientApp\app\components\user\external.signin.component.ts" />
     <TypeScriptCompile Include="ClientApp\app\components\user\forgot.component.ts" />
     <TypeScriptCompile Include="ClientApp\app\components\user\new.password.component.ts" />
+    <TypeScriptCompile Include="ClientApp\app\components\user\signin.component.ts" />
     <TypeScriptCompile Include="ClientApp\app\components\user\signin.form.component.ts" />
     <TypeScriptCompile Include="ClientApp\app\components\user\unauthorised.component.ts" />
     <TypeScriptCompile Include="ClientApp\app\components\user\register.component.ts" />

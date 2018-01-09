@@ -3409,9 +3409,9 @@
       "dev": true
     },
     "ngx-bootstrap": {
-      "version": "1.9.3",
-      "resolved": "https://registry.npmjs.org/ngx-bootstrap/-/ngx-bootstrap-1.9.3.tgz",
-      "integrity": "sha512-beoKQGJEFwdg0ctIpGb+vx4PTPkyqHrA5tBAEbnUn7ZlTjjfA6533QYGv3qVoKPDNkkHmLA3lRjWKxEMYepCdg=="
+      "version": "2.0.0-rc.0",
+      "resolved": "https://registry.npmjs.org/ngx-bootstrap/-/ngx-bootstrap-2.0.0-rc.0.tgz",
+      "integrity": "sha512-BhVJ0lAODa4HZej9ikdqDnYNjx8QDbvfz0i7hdtZsKivTEnJD8wPDrSwQ3XVAbw/NUOXmKwgFoZG6rtcubYKmQ=="
     },
     "no-case": {
       "version": "2.3.1",

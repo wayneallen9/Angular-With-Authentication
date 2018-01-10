@@ -14,6 +14,10 @@ export class AccountComponent implements OnInit {
 
     constructor(private formBuilder: FormBuilder, private userService:UserService) { }
 
+    currentPasswordHasError(): boolean {
+        return this.changePasswordForm.get('oldPassword')!.invalid && this.changePasswordForm.get('oldPassword')!.dirty;
+    }
+
     ngOnInit(): void {
         this.changePasswordForm = new FormGroup({
             oldPassword: new FormControl('', [Validators.maxLength(24), Validators.minLength(6), Validators.required]),

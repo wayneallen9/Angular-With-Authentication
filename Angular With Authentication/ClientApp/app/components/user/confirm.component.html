@@ -22,7 +22,7 @@
                     <input class="form-control" formControlName="email" placeholder="Your email address" type="email" />
                 </div>
                 <div class="form-group">
-                    <div [recaptcha]="recaptchaKey" id="confirm-recaptcha" (recaptchaed)="recaptchaed($event)"></div>
+                    <div recaptcha id="confirm-recaptcha" (recaptchaed)="recaptchaed($event)"></div>
                     <input class="invisible" formControlName="recaptcha" />
                 </div>
                 <div class="form-group-sm text-center">

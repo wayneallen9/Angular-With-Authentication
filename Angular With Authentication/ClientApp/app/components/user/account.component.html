@@ -10,19 +10,19 @@
                 <div class="alert alert-danger" *ngIf="error">
                     {{ error }}
                 </div>
-                <div class="form-group" [ngClass]="{ 'has-error':changePasswordForm.get('oldPassword').invalid && changePasswordForm.get('oldPassword').dirty }">
+                <div class="form-group" [ngClass]="{ 'has-error':changePasswordForm.get('oldPassword')!.invalid && changePasswordForm.get('oldPassword')!.dirty }">
                     <label class="control-label">Current Password</label>
                     <input class="form-control" formControlName="oldPassword" placeholder="Your current password" type="password" />
                 </div>
-                <div class="form-group" formGroupName="passwords" [ngClass]="{ 'has-error':changePasswordForm.get('passwords').get('newPassword').invalid && changePasswordForm.get('passwords').get('newPassword').dirty }">
+                <div class="form-group" formGroupName="passwords" [ngClass]="{ 'has-error':changePasswordForm.get('passwords')!.get('newPassword')!.invalid && changePasswordForm.get('passwords')!.get('newPassword')!.dirty }">
                     <label class="control-label" for="password">Password</label>
                     <input class="form-control" formControlName="newPassword" #password placeholder="New password" type="password" />
                     <small>Minimum 6 characters</small>
                 </div>
-                <div class="form-group" formGroupName="passwords" [ngClass]="{ 'has-error':changePasswordForm.get('passwords').dirty && changePasswordForm.get('passwords').invalid }">
+                <div class="form-group" formGroupName="passwords" [ngClass]="{ 'has-error':changePasswordForm.get('passwords')!.dirty && changePasswordForm.get('passwords')!.invalid }">
                     <label class="control-label" for="confirm">Repeat password</label>
                     <input class="form-control" formControlName="confirm" #confirm placeholder="Repeat password" type="password" />
-                    <small class="has-error" *ngIf="changePasswordForm.get('passwords').dirty && changePasswordForm.get('passwords').invalid">Passwords do not match</small>
+                    <small class="has-error" *ngIf="changePasswordForm.get('passwords')!.dirty && changePasswordForm.get('passwords')!.invalid">Passwords do not match</small>
                 </div>
                 <div class="form-group text-center">
                     <button class="btn btn-default" [disabled]="changePasswordForm.invalid || submitting" [ngClass]="{ 'ajax':submitting }" type="submit">Change Password</button>

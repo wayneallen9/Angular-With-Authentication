@@ -8,7 +8,6 @@ import { RecaptchaService } from "../services/recaptcha.service";
 export class RecaptchaDirective implements OnInit {
     private id: number;
     @Output() recaptchaed = new EventEmitter<string>();
-    @Input("recaptcha") key: string;
 
     constructor(private element: ElementRef, private recaptchaService: RecaptchaService) {
     }

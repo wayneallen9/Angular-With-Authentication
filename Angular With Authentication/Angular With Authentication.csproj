@@ -5,8 +5,9 @@
     <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
     <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
     <IsPackable>false</IsPackable>
-    <RootNamespace>Angular_With_Authentication</RootNamespace>
+    <RootNamespace>AngularWithAuthentication</RootNamespace>
     <UserSecretsId>fdbe4c54-341d-4874-a558-c52a9c9ef466</UserSecretsId>
+    <AssemblyName>AngularWithAuthentication</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

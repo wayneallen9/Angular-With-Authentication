@@ -43,11 +43,11 @@ namespace Angular_With_Authentication
             services.Configure<Services.JwtSettings>(Configuration.GetSection("Jwt"));
             services.Configure<Services.RecaptchaSettings>(Configuration.GetSection("Recaptcha"));
             services.Configure<Services.SendGridSettings>(Configuration.GetSection("SendGrid"));
-
+            
             // register identity providers
             services.AddDbContext<Models.ApplicationDbContext>(options =>
             {
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), optionsBuilder => optionsBuilder.MigrationsAssembly("Angular With Authentication"));
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), optionsBuilder => optionsBuilder.MigrationsAssembly("AngularWithAuthentication"));
             });
             services.AddIdentity<Models.ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<Models.ApplicationDbContext>()
@@ -71,8 +71,8 @@ namespace Angular_With_Authentication
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddFacebook(cfg =>
                 {
-                    cfg.AppId = Configuration["Facebook:AppId"];
-                    cfg.AppSecret = Configuration["Facebook:AppSecret"];
+                    cfg.AppId = Configuration["FacebookAppId"];
+                    cfg.AppSecret = Configuration["FacebookAppSecret"];
                 })
                 .AddJwtBearer(cfg =>
                 {

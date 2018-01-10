@@ -88,7 +88,7 @@ namespace Angular_With_Authentication
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, Models.ApplicationDbContext dbContext)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IServiceProvider serviceProvider)
         {
             if (env.IsDevelopment())
             {
@@ -97,6 +97,8 @@ namespace Angular_With_Authentication
                 {
                     HotModuleReplacement = true
                 });
+
+                var dbContext = serviceProvider.GetService<Models.ApplicationDbContext>();
                 dbContext.Database.Migrate();
             }
             else

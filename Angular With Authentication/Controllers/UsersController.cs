@@ -64,7 +64,7 @@ namespace Angular_With_Authentication.Controllers
                 {
                     Email = externalLoginInfo.Principal.FindFirstValue(ClaimTypes.Email),
                     IsExternal = true,
-                    UserName = externalLoginInfo.Principal.FindFirstValue(ClaimTypes.Name).Replace(" ", "")
+                    UserName = externalLoginInfo.LoginProvider + externalLoginInfo.ProviderKey
                 };
 
                 // create the identity for this user

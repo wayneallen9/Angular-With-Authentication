@@ -9,9 +9,9 @@
                 An email has been sent to your email address.  Please follow the instructions in the email to reset your password. 
             </div>
         </div>
-        <div class="form-group" [ngClass]="{ 'has-error':forgotForm.controls.email.invalid && forgotForm.controls.email.dirty }">
+        <div class="form-group" [ngClass]="{ 'has-error':forgotForm.get('email')!.invalid && forgotForm.get('email')!.dirty }">
             <label class="control-label" for="email">Your email address</label>
-            <input class="form-control" [ngClass]="{ 'ajax':forgotForm.get('email').status === 'PENDING'}" #email formControlName="email" placeholder="Your email address" type="email" />
+            <input class="form-control" [ngClass]="{ 'ajax':forgotForm.get('email')!.status === 'PENDING'}" #email formControlName="email" placeholder="Your email address" type="email" />
         </div>
         <div class="form-group">
             <div recaptcha (recaptchaed)="recaptchaed($event)"></div>

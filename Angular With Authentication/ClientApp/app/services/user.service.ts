@@ -32,9 +32,7 @@ export class UserService {
         this.saveJwtToken(token);
 
         // now request the user details
-        return this.http.post(`${this.baseUrl}api/Users/GetCurrent`, null).map((response: Response) => {
-            return this.setUpCurrentUser(response);
-        });
+        return this.getCurrent();
     }
 
     getByEmail(email: string): Observable<UserModel | null> {

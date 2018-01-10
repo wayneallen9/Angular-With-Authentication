@@ -11,5 +11,12 @@ export class ExternalSignedInComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.activatedRoute.queryParams.subscribe((params: Params) => {
+            // get the user from the server
+            this.userService.external(params.token).subscribe();
+
+            // if there is a redirect, do it
+            this.router.navigateByUrl(params.returnUrl ? params.returnUrl : "/home");
+        });
     }
 }

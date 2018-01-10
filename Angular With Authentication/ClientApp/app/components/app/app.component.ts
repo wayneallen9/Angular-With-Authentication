@@ -14,9 +14,6 @@ export class AppComponent implements OnInit {
         this.activatedRoute.queryParams.subscribe((params: Params) => {
             // if there is a token parameter, save it to local storage
             if (params.token) this.userService.saveJwtToken(params.token);
-
-            // if there is a redirect, do it
-            if (params.returnUrl) this.router.navigateByUrl(params.returnUrl);
         });
 
         // try and get the current user

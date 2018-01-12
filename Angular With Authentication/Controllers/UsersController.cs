@@ -98,7 +98,7 @@ namespace Angular_With_Authentication.Controllers
                 new Claim(JwtRegisteredClaimNames.NameId, user.Id)
             };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Secret));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var expires = DateTime.Now.AddDays(_jwtSettings.ExpireDays);
 
@@ -157,7 +157,7 @@ namespace Angular_With_Authentication.Controllers
         public async Task<IActionResult> Register([FromBody] Models.RegisterUserModel model)
         {
             // confirm the recaptcha verification
-            if (!await _recaptchaService.VerifyAsync(model.Recaptcha)) return new BadRequestResult();
+            if (!await _recaptchaService.VerifyAsync(model.Recaptcha)) return BadRequest();
 
             // create the new user
             var newUser = new Models.ApplicationUser { Email = model.Email, IsExternal=false, UserName = model.Email };

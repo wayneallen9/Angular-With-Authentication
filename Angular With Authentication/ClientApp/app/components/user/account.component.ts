@@ -1,18 +1,24 @@
 ﻿import { Component, OnInit } from '@angular/core';
+import { ComponentCanDeactivate } from '../../services/pendingchanges.guard.service';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
 import { UserService } from '../../services/user.service';
 
 @Component({
     styleUrls: ['./account.component.less'],
     templateUrl: './account.component.html'
 })
-export class AccountComponent implements OnInit {
+export class AccountComponent implements ComponentCanDeactivate, OnInit {
     error: string | null;
     changed = false;
     changePasswordForm: FormGroup;
     submitting = false;
 
     constructor(private formBuilder: FormBuilder, private userService:UserService) { }
+
+    canDeactivate(): boolean | Observable<boolean> {
+        return !this.changePasswordForm.dirty;
+    }
 
     currentPasswordHasError(): boolean {
         return this.changePasswordForm.get('oldPassword')!.invalid && this.changePasswordForm.get('oldPassword')!.dirty;

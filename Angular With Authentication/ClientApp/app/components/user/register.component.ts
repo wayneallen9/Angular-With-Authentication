@@ -1,5 +1,7 @@
 ﻿import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, FormControl, ValidationErrors, Validators } from '@angular/forms';
+import { ComponentCanDeactivate } from '../../services/pendingchanges.guard.service';
+import { Observable } from 'rxjs/Observable';
 import { Router } from '@angular/router';
 import { RecaptchaDirective } from '../../directives/recaptcha.directive';
 import { UserService } from '../../services/user.service';
@@ -10,13 +12,17 @@ import { UserModel } from '../../models/UserModel';
     styleUrls: ['./register.component.less'],
     templateUrl: './register.component.html'
 })
-export class RegisterComponent implements OnInit {
+export class RegisterComponent implements ComponentCanDeactivate, OnInit {
     error: string | null;
     @ViewChild(RecaptchaDirective) recaptchaDirective:RecaptchaDirective;
     registerForm: FormGroup;
     submitting = false;
 
     constructor(private changeDetectorRef:ChangeDetectorRef, private formBuilder: FormBuilder, private router:Router, private userService:UserService) { }
+
+    canDeactivate(): boolean | Observable<boolean> {
+        return !this.registerForm.dirty;
+    }
 
     ngOnInit() {
         this.registerForm = new FormGroup({
@@ -73,7 +79,7 @@ export class RegisterComponent implements OnInit {
             this.router.navigateByUrl("/confirm");
         }, (error:any) => {
             // show the error message
-            this.error = error.text();
+            this.error = "An unexpected error occurred.  Please try again later.";
 
             // reset Recaptcha so it can be submitted again
             this.setRecaptchaValue("");

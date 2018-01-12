@@ -1,6 +1,8 @@
-﻿import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+﻿import { ComponentCanDeactivate } from '../../services/pendingchanges.guard.service';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, FormControl, ValidationErrors, Validators } from '@angular/forms';
 import { ActivatedRoute, Params } from '@angular/router';
+import { Observable } from 'rxjs';
 import { RecaptchaDirective } from '../../directives/recaptcha.directive';
 import { UserService } from '../../services/user.service';
 import { UserModel } from '../../models/UserModel';
@@ -8,7 +10,7 @@ import { UserModel } from '../../models/UserModel';
 @Component({
     templateUrl:'./new.password.component.html'
 })
-export class NewPasswordComponent {
+export class NewPasswordComponent implements ComponentCanDeactivate, OnInit {
     changed = false;
     error: string | null;
     @ViewChild(RecaptchaDirective) recaptchaDirective: RecaptchaDirective;
@@ -18,6 +20,10 @@ export class NewPasswordComponent {
     userId: string;
 
     constructor(private activatedRoute: ActivatedRoute, private changeDetectorRef: ChangeDetectorRef, private formBuilder: FormBuilder, private userService: UserService) { }
+
+    canDeactivate(): boolean | Observable<boolean> {
+        return !this.newPasswordForm.dirty;
+    }
 
     ngOnInit() {
         this.newPasswordForm = new FormGroup({

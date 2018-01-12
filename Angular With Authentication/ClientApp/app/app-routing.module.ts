@@ -1,6 +1,7 @@
 ﻿import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
+import { PendingChangesGuardService } from './services/pendingchanges.guard.service';
 import { RegisteredGuardService } from './services/registered.guard.service';
 import { SignedInGuardService } from './services/signedin.guard.service';
 
@@ -19,15 +20,15 @@ import { UnauthorisedComponent } from './components/user/unauthorised.component'
 
 const appRoutes: Routes = [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
-    { path: 'account', component: AccountComponent, canActivate: [RegisteredGuardService] },
+    { path: 'account', component: AccountComponent, canActivate: [RegisteredGuardService], canDeactivate: [PendingChangesGuardService] },
     { path: 'confirmed', component: ConfirmedComponent },
     { path: 'external', component: ExternalSignedInComponent },
     { path: 'forgot', component: ForgotComponent },
     { path: 'home', component: HomeComponent },
     { path: 'counter', component: CounterComponent },
     { path: 'fetch-data', component: FetchDataComponent, canActivate: [SignedInGuardService] },
-    { path: 'newpassword', component: NewPasswordComponent },
-    { path: 'register', component: RegisterComponent },
+    { path: 'newpassword', component: NewPasswordComponent, canDeactivate: [PendingChangesGuardService] },
+    { path: 'register', component: RegisterComponent, canDeactivate: [PendingChangesGuardService] },
     { path: 'signin', component: SigninComponent },
     { path: 'unauthorised', component: UnauthorisedComponent },
     { path: 'confirm', component: ConfirmComponent, canActivate: [RegisteredGuardService] },
@@ -41,6 +42,7 @@ const appRoutes: Routes = [
             { enableTracing: true } // <-- debugging purposes only
         )
     ],
+    providers: [PendingChangesGuardService],
     exports: [
         RouterModule
     ]

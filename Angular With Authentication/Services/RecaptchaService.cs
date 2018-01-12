@@ -17,7 +17,7 @@ namespace Angular_With_Authentication.Services
         public async Task<bool> VerifyAsync(string response)
         {
             // get the private key for Recaptcha
-            var recaptchaPrivateKey = _configuration.PrivateKey;
+            var recaptchaPrivateKey = _configuration.Secret;
 
             // create the request
             var http = new HttpClient();

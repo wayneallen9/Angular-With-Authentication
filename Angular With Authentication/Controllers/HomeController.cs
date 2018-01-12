@@ -14,7 +14,7 @@ namespace Angular_With_Authentication.Controllers
 
         public IActionResult Index()
         {
-            ViewData["RecaptchaKey"] = configuration.Public.Key;
+            ViewData["RecaptchaKey"] = configuration.Public;
 
             return View();
         }

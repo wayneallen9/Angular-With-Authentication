@@ -71,8 +71,8 @@ namespace Angular_With_Authentication
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddFacebook(cfg =>
                 {
-                    cfg.AppId = Configuration["FacebookAppId"];
-                    cfg.AppSecret = Configuration["FacebookAppSecret"];
+                    cfg.AppId = Configuration["FacebookId"];
+                    cfg.AppSecret = Configuration["FacebookSecret"];
                 })
                 .AddJwtBearer(cfg =>
                 {

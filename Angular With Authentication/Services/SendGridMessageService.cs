@@ -15,7 +15,7 @@ namespace Angular_With_Authentication.Services
         public async Task Send(string email, string subject, string message)
         {
             // create the client
-            var client = new SendGridClient(_sendGrid.Private.Key);
+            var client = new SendGridClient(_sendGrid.Secret);
 
             // set-up the message properties
             var from = new EmailAddress(_sendGrid.From.Address, _sendGrid.From.Name);

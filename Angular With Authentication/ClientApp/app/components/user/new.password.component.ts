@@ -90,7 +90,7 @@ export class NewPasswordComponent implements ComponentCanDeactivate, OnInit {
             this.submitting = false;
         }, (error: any) => {
             // show the error message
-            this.error = error.text();
+            this.error = "An unexpected error occurred processing your request.  Please try again later.";
 
             // reset the form so it can be submitted again
             form.reset();

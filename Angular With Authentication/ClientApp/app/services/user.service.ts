@@ -14,7 +14,7 @@ import { UserModel } from '../models/UserModel';
 
 @Injectable()
 export class UserService {
-    constructor(@Inject(DOCUMENT) private document:any, private http: AuthHttp, @Inject('BASE_URL') private baseUrl: string, @Inject('LOCALSTORAGE') private localStorage:any, @Inject(PLATFORM_ID) private platformId: any) {}
+    constructor(@Inject(DOCUMENT) private document:any, private authHttp: AuthHttp, private http:Http, @Inject('BASE_URL') private baseUrl: string, @Inject('LOCALSTORAGE') private localStorage:any, @Inject(PLATFORM_ID) private platformId: any) {}
 
     email: string|null;
     isEmailConfirmed = new BehaviorSubject<boolean>(false);
@@ -22,7 +22,7 @@ export class UserService {
     isSignedIn = new BehaviorSubject<boolean>(false);
 
     changePassword(model: ChangePasswordModel): Observable<string | null> {
-        return this.http.post(`${this.baseUrl}api/Users/ChangePassword`, model).map((response: Response) => {
+        return this.authHttp.post(`${this.baseUrl}api/Users/ChangePassword`, model).map((response: Response) => {
             return response.ok ? null : response.text();
         });
     }
@@ -62,7 +62,7 @@ export class UserService {
         if (!tokenNotExpired()) return new BehaviorSubject<UserModel | null>(null);
 
         // has the token expired?
-        return this.http.post(`${this.baseUrl}api/Users/GetCurrent`, null).map((response: Response) => {
+        return this.authHttp.post(`${this.baseUrl}api/Users/GetCurrent`, null).map((response: Response) => {
             return this.setUpCurrentUser(response);
         });
     }
@@ -157,7 +157,7 @@ export class UserService {
 
     signOut(): void {
         // sign the user out on the server
-        this.http.post(`${this.baseUrl}api/Users/SignOut`, null).subscribe();
+        this.authHttp.post(`${this.baseUrl}api/Users/SignOut`, null).subscribe();
 
         // clear the properties
         this.email = null;

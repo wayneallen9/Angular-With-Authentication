@@ -44,9 +44,9 @@ The project uses [SendGrid](https://www.sendgrid.com) to perform email delivery.
 ```
 
 ### 5. Set-up a JWT token
-The project uses JWT tokens to for user authentication.  These tokens are encrypted with a SymmetricSecurityKey, so you will need to provide a unique key for the encryption.  Choose a unique encryption string, then in the user secrets, add the following JSON.
+The project uses JWT tokens for user authentication.  These tokens are encrypted with a SymmetricSecurityKey, so you will need to provide a unique key for the encryption.  Choose a unique encryption string, then in the user secrets, add the following JSON.
 ```javascript
 "Jwt": {
-  "Secret": "<a unique encryption string>"
+  "Secret": "<your unique encryption string>"
 }
 ```

@@ -91,7 +91,7 @@ export class RegisterComponent implements ComponentCanDeactivate, OnInit {
     }
 
     private validateEmailUnique(control: AbstractControl) {
-        return this.userService.getByEmail(control.value).map((response) => {
+        return this.userService.getByUserName(control.value).map((response) => {
             return response ? { emailNotUnique: true } : null;
         });
     }

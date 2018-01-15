@@ -1,12 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
 namespace Angular_With_Authentication
 {
@@ -19,6 +13,22 @@ namespace Angular_With_Authentication
 
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration((configurationBuilder, config) =>
+                {
+                    // get the environment
+                    var env = configurationBuilder.HostingEnvironment;
+
+                    // update the configuration
+                    config.SetBasePath(env.ContentRootPath)
+                        .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                        .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true);
+
+                    if (env.IsDevelopment())
+                    {
+                        config.AddUserSecrets<Startup>();
+                    }
+                })
+                
                 .UseStartup<Startup>()
                 .Build();
     }

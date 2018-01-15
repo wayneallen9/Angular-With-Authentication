@@ -46,6 +46,17 @@ export class UserService {
         });
     }
 
+    getByUserName(email: string): Observable<UserModel | null> {
+        return this.http.get(`${this.baseUrl}api/Users/GetByUserName`, {
+            params: {
+                "email": email
+            }
+        }).map((response: Response) => {
+            // were we able to get?
+            return response.ok ? response.json() as UserModel : null;
+        });
+    }
+
     getCurrent(): Observable<UserModel | null> {
         // if the token has expired, return null
         if (!tokenNotExpired()) return new BehaviorSubject<UserModel | null>(null);

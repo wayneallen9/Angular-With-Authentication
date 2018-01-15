@@ -63,6 +63,7 @@ namespace Angular_With_Authentication.Controllers
                 user = new Models.ApplicationUser
                 {
                     Email = externalLoginInfo.Principal.FindFirstValue(ClaimTypes.Email),
+                    EmailConfirmed = true,
                     IsExternal = true,
                     UserName = externalLoginInfo.LoginProvider + externalLoginInfo.ProviderKey
                 };
@@ -119,6 +120,19 @@ namespace Angular_With_Authentication.Controllers
             var user = await _userManager.FindByEmailAsync(email);
             
             // return the user
+            return Ok(Mapper.Map<Models.UserModel>(user));
+        }
+
+        /// <summary>
+        /// Retrieve a user record by their username.
+        /// </summary>
+        /// <param name="email">The username to search for.</param>
+        /// <returns>A <see cref="Models.UserModel"/> if a user exists with the specified username.  Otherwise, returns null.</returns>
+        public async Task<IActionResult> GetByUserName(string email)
+        {
+            // try and get the user
+            var user = await _userManager.FindByNameAsync(email);
+
             return Ok(Mapper.Map<Models.UserModel>(user));
         }
 

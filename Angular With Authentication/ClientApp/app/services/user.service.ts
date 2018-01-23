@@ -1,4 +1,4 @@
-﻿import { AuthHttp, tokenNotExpired } from 'angular2-jwt';
+﻿import { AuthHttp, JwtHelper } from 'angular2-jwt';
 import { ChangePasswordModel } from '../models/ChangePasswordModel';
 import { DOCUMENT } from '@angular/platform-browser';
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
@@ -14,7 +14,10 @@ import { UserModel } from '../models/UserModel';
 
 @Injectable()
 export class UserService {
-    constructor(@Inject(DOCUMENT) private document:any, private authHttp: AuthHttp, private http:Http, @Inject('BASE_URL') private baseUrl: string, @Inject('LOCALSTORAGE') private localStorage:any, @Inject(PLATFORM_ID) private platformId: any) {}
+    constructor( @Inject(DOCUMENT) private document: any, private authHttp: AuthHttp, private http: Http, @Inject('BASE_URL') private baseUrl: string, @Inject('LOCALSTORAGE') private localStorage: any, @Inject(PLATFORM_ID) private platformId: any) {
+        // set the default state for the user
+        this.initialise();
+    }
 
     email: string|null;
     isEmailConfirmed = new BehaviorSubject<boolean>(false);
@@ -25,14 +28,6 @@ export class UserService {
         return this.authHttp.post(`${this.baseUrl}api/Users/ChangePassword`, model).map((response: Response) => {
             return response.ok ? null : response.text();
         });
-    }
-
-    external(token: string): Observable<UserModel | null> {
-        // save the token
-        this.saveJwtToken(token);
-
-        // now request the user details
-        return this.getCurrent();
     }
 
     getByEmail(email: string): Observable<UserModel | null> {
@@ -58,13 +53,42 @@ export class UserService {
     }
 
     getCurrent(): Observable<UserModel | null> {
-        // if the token has expired, return null
-        if (!tokenNotExpired()) return new BehaviorSubject<UserModel | null>(null);
-
         // has the token expired?
         return this.authHttp.post(`${this.baseUrl}api/Users/GetCurrent`, null).map((response: Response) => {
-            return this.setUpCurrentUser(response);
+            return response.text() ? response.json() : null;
         });
+    }
+
+    private initialiseFromToken(token: string) {
+        // if the token is empty, don't do anything
+        if (!token) return;
+
+        const jwtHelper = new JwtHelper();
+
+        try {
+            // is the token still valid?
+            if (jwtHelper.isTokenExpired(token)) return;
+
+            // the user is signed in
+            this.isSignedIn.next(true);
+
+            // extract the claims from the token
+            const claims = jwtHelper.decodeToken(token);
+
+            // populate the values from the claims
+            this.email = claims.sub;
+            this.isEmailConfirmed.next(claims.isemailconfirmed);
+            this.isExternal.next(claims.isexternal);
+        }
+        catch (e) { }
+    }
+
+    private initialise(): void {
+        // get the token from local storage
+        const token = this.localStorage.getItem("token");
+
+        // now initialise the user
+        this.initialiseFromToken(token);
     }
 
     newPassword(model: NewPasswordModel): Observable<boolean> {
@@ -82,32 +106,12 @@ export class UserService {
 
     register(model: RegisterUserModel): Observable<UserModel | null> {
         return this.http.post(`${this.baseUrl}api/Users/Register`, model).map((response: Response) => {
+            // update the token
+            this.saveJwtToken(this.getJwtToken(response));
+
             // set up the current user from the server response
-            return this.setUpCurrentUser(response);
+            return response.json();
         });
-    }
-
-    private setUpCurrentUser(response: Response): UserModel | null {
-        // was a response returned?
-        if (response.text()) {
-            // get the user details
-            const user = response.json() as UserModel;
-
-            // set the service properties
-            this.email = user.email;
-            this.isEmailConfirmed.next(user.emailConfirmed);
-            this.isExternal.next(user.isExternal);
-            this.isSignedIn.next(true);
-
-            return user;
-        } else {
-            this.email = null;
-            this.isEmailConfirmed.next(false);
-            this.isExternal.next(false);
-            this.isSignedIn.next(false);
-
-            return null;
-        }
     }
 
     resendEmailConfirmation(model: ResendConfirmationEmailModel): Observable<boolean> {
@@ -125,33 +129,20 @@ export class UserService {
     }
 
     saveJwtToken(token: string) {
-        // only do token management on the browser
-        if (isPlatformBrowser(this.platformId)) {
-            // save the token in local storage
-            this.localStorage.setItem("token", token);
-        }
+        // save the token in localstorage
+        this.localStorage.setItem("token", token);
+
+        // populate the user from the token
+        this.initialiseFromToken(token);
     }
 
     signIn(model: SignInUserModel): Observable<UserModel | null> {
         return this.http.post(`${this.baseUrl}api/Users/SignIn`, model).map((response: Response) => {
+            // update the user state
+            this.saveJwtToken(this.getJwtToken(response));
+
             // if the sign in is successful, the server will return the user details
-            if (response.text()) {
-                // get the user details
-                var user = response.json() as UserModel;
-
-                // the response content is null if it was an invalid email/password combination
-                if (user) {
-                    this.saveJwtToken(this.getJwtToken(response));
-
-                    this.email = user.email;
-                    this.isEmailConfirmed.next(user.emailConfirmed);
-                    this.isSignedIn.next(true);
-                }
-
-                return user;
-            }
-
-            return null;
+            return (response.text()) ? response.json() : null;
         });
     }
 
@@ -165,10 +156,7 @@ export class UserService {
         this.isExternal.next(false);
         this.isSignedIn.next(false);
 
-        // only do token management on the browser
-        if (isPlatformBrowser(this.platformId)) {
-            // delete the token
-            this.localStorage.removeItem("token");
-        }
+        // delete the token
+        this.localStorage.removeItem("token");
     }
 }

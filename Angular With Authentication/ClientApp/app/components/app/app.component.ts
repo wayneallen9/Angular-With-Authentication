@@ -15,8 +15,5 @@ export class AppComponent implements OnInit {
             // if there is a token parameter, save it to local storage
             if (params.token) this.userService.saveJwtToken(params.token);
         });
-
-        // try and get the current user
-        this.userService.getCurrent().subscribe();
     }
 }

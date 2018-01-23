@@ -70,11 +70,11 @@ namespace Angular_With_Authentication.Controllers
 
                 // create the identity for this user
                 var identityResult = await _userManager.CreateAsync(user);
-                if (!identityResult.Succeeded) return new StatusCodeResult(500);
+                if (!identityResult.Succeeded) return StatusCode(500);
 
                 // add the external login
                 identityResult = await _userManager.AddLoginAsync(user, externalLoginInfo);
-                if (!identityResult.Succeeded) return new StatusCodeResult(500);
+                if (!identityResult.Succeeded) return StatusCode(500);
 
                 // sign the user in
                 await _signInManager.SignInAsync(user, false);
@@ -92,11 +92,15 @@ namespace Angular_With_Authentication.Controllers
 
         private string GenerateJwtToken(Models.ApplicationUser user)
         {
+            // The client state can be retrieved from the claims.  This allows the application to
+            // set the user authentication state without a round trip to the server
             var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Email),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.NameId, user.Id)
+                new Claim(JwtRegisteredClaimNames.NameId, user.Id),
+                new Claim("isexternal", user.IsExternal.ToString(), ClaimValueTypes.Boolean),
+                new Claim("isemailconfirmed", user.EmailConfirmed.ToString(), ClaimValueTypes.Boolean)
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Secret));
@@ -148,26 +152,36 @@ namespace Angular_With_Authentication.Controllers
             return Ok(Mapper.Map<Models.UserModel>(user));
         }
 
+        /// <summary>
+        /// Change the current user's password.
+        /// </summary>
+        /// <param name="model">A <see cref="Models.NewPasswordModel"/> object with the change details.</param>
+        /// <returns>A <see cref="OkResult"/> object if successfully changed.  Otherwise, a <see cref="BadRequestResult"/> object.</returns>
         [HttpPost]
         public async Task<IActionResult> NewPassword([FromBody] Models.NewPasswordModel model)
         {
             // confirm the recaptcha verification
-            if (!await _recaptchaService.VerifyAsync(model.Recaptcha)) return new BadRequestResult();
+            if (!await _recaptchaService.VerifyAsync(model.Recaptcha)) return BadRequest();
 
             // get the user
             var user = await _userManager.FindByIdAsync(model.UserId);
-            if (user == null) return new OkResult();
+            if (user == null) return Ok();
 
             // now reset the password
             var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
-            if (!result.Succeeded) return new BadRequestObjectResult(result.Errors.First().Description);
+            if (!result.Succeeded) return BadRequest(result.Errors.First().Description);
 
             // add a JWT token to the response
             AddJwtTokenToResponse(user);
 
-            return new OkResult();
+            return Ok();
         }
 
+        /// <summary>
+        /// Register a new user for the application.
+        /// </summary>
+        /// <param name="model">A <see cref="Models.RegisterUserModel"/> object with the new user's details.</param>
+        /// <returns>A <see cref="OkObjectResult"/> object if the registration was successful.  Otherwise, a <see cref="BadRequestResult"/> object.</returns>
         public async Task<IActionResult> Register([FromBody] Models.RegisterUserModel model)
         {
             // confirm the recaptcha verification
@@ -178,22 +192,25 @@ namespace Angular_With_Authentication.Controllers
 
             // add them to the database
             var result = await _userManager.CreateAsync(newUser, model.Password);
-            if (!result.Succeeded) return new BadRequestObjectResult(result.Errors.First().Description);
+            if (!result.Succeeded) return BadRequest(result.Errors.First().Description);
 
             // send the confirmation email
             await SendConfirmationEmail(newUser);
 
-            return new OkObjectResult(Mapper.Map<Models.UserModel>(newUser));
+            // send a new token with the response
+            AddJwtTokenToResponse(newUser);
+
+            return Ok(Mapper.Map<Models.UserModel>(newUser));
         }
 
         public async Task<IActionResult> ResetPassword([FromBody] Models.ResetPasswordModel model)
         {
             // confirm the recaptcha verification
-            if (!await _recaptchaService.VerifyAsync(model.Recaptcha)) return new BadRequestResult();
+            if (!await _recaptchaService.VerifyAsync(model.Recaptcha)) return BadRequest();
 
             // get the user being reset
             var user = await _userManager.FindByEmailAsync(model.Email);
-            if (user == null) return new OkResult();
+            if (user == null) return Ok();
 
             // generate the token to reset the email address
             var resetPasswordToken = await _userManager.GeneratePasswordResetTokenAsync(user);
@@ -202,7 +219,7 @@ namespace Angular_With_Authentication.Controllers
             // now send the email
             await _messageService.Send(user.Email, "Reset your password", $"Click <a href=\"{resetPasswordUrl}\">here</a> to reset your password");
 
-            return new OkResult();
+            return Ok();
         }
 
         private async Task SendConfirmationEmail(Models.ApplicationUser newUser)
@@ -219,16 +236,16 @@ namespace Angular_With_Authentication.Controllers
         {
             // get the user
             var identity = await _userManager.FindByEmailAsync(model.Email);
-            if (identity == null) return new OkResult();
+            if (identity == null) return Ok();
 
             // try and sign the user in
             var result = await _signInManager.PasswordSignInAsync(identity, model.Password, false, true);
-            if (!result.Succeeded) return new OkResult();
+            if (!result.Succeeded) return Ok();
 
             // add a JWT token to the response
             AddJwtTokenToResponse(identity);
 
-            return new OkObjectResult(Mapper.Map<Models.UserModel>(identity));
+            return Ok(Mapper.Map<Models.UserModel>(identity));
         }
 
         [Authorize]
@@ -256,11 +273,17 @@ namespace Angular_With_Authentication.Controllers
 
             // now change the password
             var result = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
-            if (!result.Succeeded) return new BadRequestObjectResult(result.Errors.First().Description);
+            if (!result.Succeeded) return BadRequest(result.Errors.First().Description);
 
-            return new OkResult();
+            return Ok();
         }
 
+        /// <summary>
+        /// Confirm a user's email address.
+        /// </summary>
+        /// <param name="id">The user if of the user being confirmed.</param>
+        /// <param name="token">The email confirmation token.</param>
+        /// <returns>A <see cref="LocalRedirectResult"/> to the appropriate end route.</returns>
         public async Task<IActionResult> Confirm(string id, string token)
         {
             // get the user
@@ -273,26 +296,29 @@ namespace Angular_With_Authentication.Controllers
                 var result = await _userManager.ConfirmEmailAsync(newUser, token);
 
                 // if the confirmation failed, show the failure message
-                if (!result.Succeeded) return View();
+                if (!result.Succeeded) return LocalRedirect("~/home");
             }
 
-            // redirect the user to the confirmed page
-            return new LocalRedirectResult("~/confirmed", false);
+            // get a new JWT token for this user
+            var jwtToken = GenerateJwtToken(newUser);
+
+            // redirect the user to the external login route
+            return LocalRedirect($"/external?returnUrl=/confirmed&token={ jwtToken }");
         }
 
         public async Task<IActionResult> ResendConfirmationEmail([FromBody] Models.ResendConfirmationEmailModel model)
         {
             // confirm the recaptcha verifications
-            if (!await _recaptchaService.VerifyAsync(model.Recaptcha)) return new BadRequestResult();
+            if (!await _recaptchaService.VerifyAsync(model.Recaptcha)) return BadRequest();
 
             // get the user
             var user = await _userManager.FindByEmailAsync(model.Email);
-            if (user == null) return new BadRequestResult();
+            if (user == null) return BadRequest();
 
             // send the ocnfirmation email
             await SendConfirmationEmail(user);
 
-            return new OkResult();
+            return Ok();
         }
     }
 }

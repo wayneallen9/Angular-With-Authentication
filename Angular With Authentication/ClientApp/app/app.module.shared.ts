@@ -73,6 +73,13 @@ import { RecaptchaDirective } from './directives/recaptcha.directive';
 export class AppModuleShared {
 }
 
-export function getLocalStorage() {
-    return (typeof window !== "undefined") ? window.localStorage : null;
+export function getLocalStorage(): Storage {
+    return (typeof window !== "undefined") ? window.localStorage : {
+        length: 0,
+        clear: () => { },
+        getItem: (key: string) => null,
+        key: (index: number) => null,
+        removeItem: (key: string) => { },
+        setItem: (key: string) => { }
+    };
 }

@@ -59,17 +59,20 @@ namespace Angular_With_Authentication
 
             });
 
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddFacebook(cfg =>
-                {
-                    cfg.AppId = Configuration["FacebookId"];
-                    cfg.AppSecret = Configuration["FacebookSecret"];
-                })
-                .AddJwtBearer(cfg =>
-                {
-                    cfg.RequireHttpsMetadata = false;
-                    cfg.SaveToken = true;
-                });
+            services.AddAuthentication(cfg => {
+                cfg.DefaultScheme = IdentityConstants.ApplicationScheme;
+                cfg.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddFacebook(cfg =>
+            {
+                cfg.AppId = Configuration["FacebookId"];
+                cfg.AppSecret = Configuration["FacebookSecret"];
+            })
+            .AddJwtBearer(cfg =>
+            {
+                cfg.RequireHttpsMetadata = false;
+                cfg.SaveToken = true;
+            });
 
             services.AddMvc();
 

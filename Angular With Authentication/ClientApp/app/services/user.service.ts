@@ -1,9 +1,7 @@
-﻿import { AuthHttp, JwtHelper } from 'angular2-jwt';
-import { ChangePasswordModel } from '../models/ChangePasswordModel';
-import { DOCUMENT } from '@angular/platform-browser';
-import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
-import { Headers, Http, RequestOptionsArgs, Response } from '@angular/http';
+﻿import { ChangePasswordModel } from '../models/ChangePasswordModel';
+import { Inject, Injectable } from '@angular/core';
+import { Response } from '@angular/http';
+import { HttpService } from './http.service';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { NewPasswordModel } from '../models/NewPasswordModel';
 import { RegisterUserModel } from '../models/RegisterUserModel';
@@ -14,9 +12,23 @@ import { UserModel } from '../models/UserModel';
 
 @Injectable()
 export class UserService {
-    constructor( @Inject(DOCUMENT) private document: any, private authHttp: AuthHttp, private http: Http, @Inject('BASE_URL') private baseUrl: string, @Inject('LOCALSTORAGE') private localStorage: any, @Inject(PLATFORM_ID) private platformId: any) {
-        // set the default state for the user
-        this.initialise();
+    constructor(private httpService: HttpService, @Inject('BASE_URL') private baseUrl: string) {
+        httpService.claims.subscribe((claims: any | null) => {
+            // are there any claims
+            if (claims) {
+                // populate the values from the claims
+                this.email = claims.sub;
+                this.isEmailConfirmed.next(claims.isemailconfirmed);
+                this.isExternal.next(claims.isexternal);
+                this.isSignedIn.next(true);
+            } else {
+                // reset the values
+                this.email = null;
+                this.isEmailConfirmed.next(false);
+                this.isExternal.next(false);
+                this.isSignedIn.next(false);
+            }
+        });
     }
 
     email: string|null;
@@ -25,13 +37,13 @@ export class UserService {
     isSignedIn = new BehaviorSubject<boolean>(false);
 
     changePassword(model: ChangePasswordModel): Observable<string | null> {
-        return this.authHttp.post(`${this.baseUrl}api/Users/ChangePassword`, model).map((response: Response) => {
+        return this.httpService.post(`${this.baseUrl}api/Users/ChangePassword`, model).map((response: Response) => {
             return response.ok ? null : response.text();
         });
     }
 
     getByEmail(email: string): Observable<UserModel | null> {
-        return this.http.get(`${this.baseUrl}api/Users/GetByEmail`, {
+        return this.httpService.get(`${this.baseUrl}api/Users/GetByEmail`, {
             params: {
                 "email": email
             }
@@ -42,7 +54,7 @@ export class UserService {
     }
 
     getByUserName(email: string): Observable<UserModel | null> {
-        return this.http.get(`${this.baseUrl}api/Users/GetByUserName`, {
+        return this.httpService.get(`${this.baseUrl}api/Users/GetByUserName`, {
             params: {
                 "email": email
             }
@@ -54,12 +66,12 @@ export class UserService {
 
     getCurrent(): Observable<UserModel | null> {
         // has the token expired?
-        return this.authHttp.post(`${this.baseUrl}api/Users/GetCurrent`, null).map((response: Response) => {
-            return response.text() ? response.json() : null;
+        return this.httpService.post(`${this.baseUrl}api/Users/GetCurrent`, null).map((response: Response) => {
+            return response.ok ? response.json() : null;
         });
     }
 
-    private initialiseFromToken(token: string) {
+    /*private initialiseFromToken(token: string) {
         // if the token is empty, don't do anything
         if (!token) return;
 
@@ -81,21 +93,18 @@ export class UserService {
             this.isExternal.next(claims.isexternal);
         }
         catch (e) { }
-    }
+    }*/
 
-    private initialise(): void {
+    /*private initialise(): void {
         // get the token from local storage
         const token = this.localStorage.getItem("token");
 
         // now initialise the user
         this.initialiseFromToken(token);
-    }
+    }*/
 
     newPassword(model: NewPasswordModel): Observable<boolean> {
-        return this.http.post(`${this.baseUrl}api/Users/NewPassword`, model).map((response: Response) => {
-            // update the JWT token from the response
-            this.saveJwtToken(this.getJwtToken(response));
-
+        return this.httpService.post(`${this.baseUrl}api/Users/NewPassword`, model).map((response: Response) => {
             // 200 result means update was successful
             return true;
         }, () => {
@@ -105,50 +114,32 @@ export class UserService {
     }
 
     register(model: RegisterUserModel): Observable<UserModel | null> {
-        return this.http.post(`${this.baseUrl}api/Users/Register`, model).map((response: Response) => {
-            // update the token
-            this.saveJwtToken(this.getJwtToken(response));
-
+        return this.httpService.post(`${this.baseUrl}api/Users/Register`, model).map((response: Response) => {
             // set up the current user from the server response
-            return response.json();
+            return response.ok ? response.json() : null;
         });
     }
 
     resendEmailConfirmation(model: ResendConfirmationEmailModel): Observable<boolean> {
-        return this.http.post(`${this.baseUrl}api/Users/ResendConfirmationEmail`, model).map((response: Response) => {
+        return this.httpService.post(`${this.baseUrl}api/Users/ResendConfirmationEmail`, model).map((response: Response) => {
             return response.ok;
         });
     }
 
     resetPassword(model: ResetPasswordModel): Observable<Response> {
-        return this.http.post(`${this.baseUrl}api/Users/ResetPassword`, model);
-    }
-
-    private getJwtToken(response: Response) {
-        return response.headers!.get("X-jwt")!;
-    }
-
-    saveJwtToken(token: string) {
-        // save the token in localstorage
-        this.localStorage.setItem("token", token);
-
-        // populate the user from the token
-        this.initialiseFromToken(token);
+        return this.httpService.post(`${this.baseUrl}api/Users/ResetPassword`, model);
     }
 
     signIn(model: SignInUserModel): Observable<UserModel | null> {
-        return this.http.post(`${this.baseUrl}api/Users/SignIn`, model).map((response: Response) => {
-            // update the user state
-            this.saveJwtToken(this.getJwtToken(response));
-
+        return this.httpService.post(`${this.baseUrl}api/Users/SignIn`, model).map((response: Response) => {
             // if the sign in is successful, the server will return the user details
-            return (response.text()) ? response.json() : null;
+            return response.ok && response.text() ? response.json() : null;
         });
     }
 
     signOut(): void {
         // sign the user out on the server
-        this.authHttp.post(`${this.baseUrl}api/Users/SignOut`, null).subscribe();
+        this.httpService.post(`${this.baseUrl}api/Users/SignOut`, null).subscribe();
 
         // clear the properties
         this.email = null;
@@ -157,6 +148,6 @@ export class UserService {
         this.isSignedIn.next(false);
 
         // delete the token
-        this.localStorage.removeItem("token");
+        this.httpService.clearToken();
     }
 }

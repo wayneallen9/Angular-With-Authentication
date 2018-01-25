@@ -1,21 +1,15 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { UserModel } from '../../models/UserModel';
-import { UserService } from '../../services/user.service';
 
 @Component({
     template: ""
 })
 export class ExternalSignedInComponent implements OnInit {
-    constructor(private activatedRoute: ActivatedRoute, private router: Router, private userService: UserService) {
-    }
+    constructor(private activatedRoute: ActivatedRoute, private router: Router) { }
 
     ngOnInit(): void {
         this.activatedRoute.queryParams.subscribe((params: Params) => {
-            // get the user from the server
-            this.userService.saveJwtToken(params.token);
-
-            // if there is a redirect, do it
+            // redirect to the end route
             this.router.navigateByUrl(params.returnUrl ? params.returnUrl : "/home");
         });
     }

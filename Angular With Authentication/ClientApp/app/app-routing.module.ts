@@ -8,6 +8,7 @@ import { SignedInGuardService } from './services/signedin.guard.service';
 import { AccountComponent } from './components/user/account.component';
 import { ConfirmComponent } from './components/user/confirm.component';
 import { ConfirmedComponent } from './components/user/confirmed.component';
+import { ExpiredComponent } from './components/user/expired.component';
 import { ExternalSignedInComponent } from './components/user/external.signedin.component';
 import { ForgotComponent } from './components/user/forgot.component';
 import { HomeComponent } from './components/home/home.component';
@@ -22,6 +23,7 @@ const appRoutes: Routes = [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
     { path: 'account', component: AccountComponent, canActivate: [RegisteredGuardService], canDeactivate: [PendingChangesGuardService] },
     { path: 'confirmed', component: ConfirmedComponent },
+    { path: 'expired', component:ExpiredComponent },
     { path: 'external', component: ExternalSignedInComponent },
     { path: 'forgot', component: ForgotComponent },
     { path: 'home', component: HomeComponent },

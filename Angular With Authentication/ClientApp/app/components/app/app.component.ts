@@ -13,7 +13,7 @@ export class AppComponent implements OnInit {
     ngOnInit(): void {
         this.activatedRoute.queryParams.subscribe((params: Params) => {
             // if there is a token parameter, save it to local storage
-            if (params.token) this.userService.saveJwtToken(params.token);
+            //if (params.token) this.userService.saveJwtToken(params.token);
         });
     }
 }

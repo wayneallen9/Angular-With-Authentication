@@ -35,7 +35,7 @@ export class NewPasswordComponent implements ComponentCanDeactivate, OnInit {
         });
 
         this.activatedRoute.queryParams.subscribe((params: Params) => {
-            this.token = params.token;
+            this.token = params.prt;
             this.userId = params.userId;
         });
     }

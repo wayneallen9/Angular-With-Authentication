@@ -13,7 +13,7 @@ export class ExpiredComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.activatedRouter.params.subscribe((params: Params) => {
+        this.activatedRouter.queryParams.subscribe((params: Params) => {
             this.returnUrl = params.returnUrl;
         })
     }

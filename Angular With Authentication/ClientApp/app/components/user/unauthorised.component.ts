@@ -6,7 +6,7 @@ import 'rxjs/add/operator/filter';
     templateUrl: './unauthorised.component.html'
 })
 export class UnauthorisedComponent implements OnInit {
-    return:string;
+    returnUrl:string;
 
     constructor(private route:ActivatedRoute, private router: Router) { }
 
@@ -16,7 +16,7 @@ export class UnauthorisedComponent implements OnInit {
 
     continue(): void {
         // the user has signed in, so continue to the return route
-        this.router.navigateByUrl(this.return);
+        this.router.navigateByUrl(this.returnUrl);
     }
 
     forgotPassword(): void {
@@ -26,7 +26,7 @@ export class UnauthorisedComponent implements OnInit {
     ngOnInit(): void {
         this.route.queryParams
             .subscribe(params => {
-                this.return = params.return;
+                this.returnUrl = params.returnUrl;
             });
     }
 }

@@ -181,7 +181,7 @@ namespace Angular_With_Authentication.Controllers
         /// Register a new user for the application.
         /// </summary>
         /// <param name="model">A <see cref="Models.RegisterUserModel"/> object with the new user's details.</param>
-        /// <returns>A <see cref="OkObjectResult"/> object if the registration was successful.  Otherwise, a <see cref="BadRequestResult"/> object.</returns>
+        /// <returns>An <see cref="OkObjectResult"/> object if the registration was successful.  Otherwise, a <see cref="BadRequestResult"/> object.</returns>
         public async Task<IActionResult> Register([FromBody] Models.RegisterUserModel model)
         {
             // confirm the recaptcha verification
@@ -203,6 +203,11 @@ namespace Angular_With_Authentication.Controllers
             return Ok(Mapper.Map<Models.UserModel>(newUser));
         }
 
+        /// <summary>
+        /// Allow a user to request a password reset email
+        /// </summary>
+        /// <param name="model">A <see cref="Models.ResetPasswordModel"/> object with the reset request details.</param>
+        /// <returns>An <see cref="OkObjectResult"/> object.</returns>
         public async Task<IActionResult> ResetPassword([FromBody] Models.ResetPasswordModel model)
         {
             // confirm the recaptcha verification
@@ -214,7 +219,7 @@ namespace Angular_With_Authentication.Controllers
 
             // generate the token to reset the email address
             var resetPasswordToken = await _userManager.GeneratePasswordResetTokenAsync(user);
-            var resetPasswordUrl = $"{ this.GetRequestUri().GetLeftPart(UriPartial.Authority) }/newpassword?token={ resetPasswordToken }&userId={ user.Id }";
+            var resetPasswordUrl = $"{ this.GetRequestUri().GetLeftPart(UriPartial.Authority) }/newpassword?rpt={ resetPasswordToken }&userId={ user.Id }";
 
             // now send the email
             await _messageService.Send(user.Email, "Reset your password", $"Click <a href=\"{resetPasswordUrl}\">here</a> to reset your password");

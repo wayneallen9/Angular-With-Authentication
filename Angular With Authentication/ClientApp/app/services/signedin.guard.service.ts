@@ -11,7 +11,7 @@ export class SignedInGuardService implements CanActivate {
         if (!this.userService.isSignedIn.value) {
             this.router.navigate(['/unauthorised'], {
                 queryParams: {
-                    return: state.url
+                    returnUrl: state.url
                 }
             });
         }

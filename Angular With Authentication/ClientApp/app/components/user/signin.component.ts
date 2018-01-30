@@ -5,6 +5,8 @@ import { Router } from '@angular/router';
     templateUrl: './signin.component.html'
 })
 export class SigninComponent {
+    returnUrl = "/home";
+
     constructor(private router: Router) { }
 
     continue(): void {

@@ -10,7 +10,9 @@ module.exports = (env) => {
     const sharedConfig = {
         stats: { modules: false },
         context: __dirname,
-        resolve: { extensions: [ '.js', '.ts' ] },
+        resolve: {
+            extensions: ['.js', '.ts']
+        },
         output: {
             filename: '[name].js',
             publicPath: 'dist/' // Webpack dev middleware, if enabled, handles requests for this URL prefix
@@ -24,7 +26,10 @@ module.exports = (env) => {
                 { test: /\.less$/, use: [ 'to-string-loader', 'css-loader', 'less-loader' ] }
             ]
         },
-        plugins: [new CheckerPlugin()]
+        plugins: [
+            new webpack.ProvidePlugin({ $: 'jquery', jQuery: 'jquery' }), // Maps these identifiers to the jQuery package (because Bootstrap expects it to be a global variable)
+            new CheckerPlugin()
+        ]
     };
 
     // Configuration for client-side bundle suitable for running in browsers

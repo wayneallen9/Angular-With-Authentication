@@ -42,6 +42,7 @@
     <None Remove="ClientApp\app\components\user\external.signin.component.ts" />
     <None Remove="ClientApp\app\components\user\forgot.component.ts" />
     <None Remove="ClientApp\app\components\user\signin.component.ts" />
+    <None Remove="ClientApp\app\directives\collapse.directive.ts" />
     <None Remove="ClientApp\app\directives\recaptcha.directive.ts" />
     <None Remove="ClientApp\app\services\http.service.ts" />
     <None Remove="ClientApp\app\services\pendingchanges.guard.service.ts" />
@@ -62,6 +63,7 @@
     <TypeScriptCompile Include="ClientApp\app\components\user\signin.form.component.ts" />
     <TypeScriptCompile Include="ClientApp\app\components\user\unauthorised.component.ts" />
     <TypeScriptCompile Include="ClientApp\app\components\user\register.component.ts" />
+    <TypeScriptCompile Include="ClientApp\app\directives\collapse.directive.ts" />
     <TypeScriptCompile Include="ClientApp\app\directives\recaptcha.directive.ts" />
     <TypeScriptCompile Include="ClientApp\app\services\http.service.ts" />
     <TypeScriptCompile Include="ClientApp\app\services\pendingchanges.guard.service.ts" />

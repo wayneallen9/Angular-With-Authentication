@@ -38,7 +38,6 @@
     "json-loader": "0.5.4",
     "less": "2.7.3",
     "less-loader": "4.0.5",
-    "ngx-bootstrap": "2.0.0-rc.0",
     "preboot": "4.5.2",
     "raw-loader": "0.5.1",
     "reflect-metadata": "0.1.10",

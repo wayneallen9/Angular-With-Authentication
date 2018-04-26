@@ -1,5 +1,4 @@
 import { NgModule } from '@angular/core';
-import { CollapseModule } from 'ngx-bootstrap';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
@@ -33,10 +32,12 @@ import { ScriptLoaderService } from './services/script.loader.service';
 import { SignedInGuardService } from './services/signedin.guard.service';
 import { UserService } from './services/user.service';
 
+import { CollapseDirective } from './directives/collapse.directive';
 import { RecaptchaDirective } from './directives/recaptcha.directive';
 
 @NgModule({
     declarations: [
+        CollapseDirective,
         RecaptchaDirective,
         AccountComponent,
         AppComponent,
@@ -59,7 +60,6 @@ import { RecaptchaDirective } from './directives/recaptcha.directive';
     imports: [
         AppAuthModule,
         AppRoutingModule,
-        CollapseModule.forRoot(),
         CommonModule,
         HttpModule,
         ReactiveFormsModule

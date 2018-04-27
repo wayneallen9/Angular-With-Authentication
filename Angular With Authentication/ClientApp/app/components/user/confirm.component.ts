@@ -4,7 +4,6 @@ import { RecaptchaDirective } from '../../directives/recaptcha.directive';
 import { UserService } from '../../services/user.service';
 
 @Component({
-    styleUrls: ['./confirm.component.less'],
     templateUrl: './confirm.component.html'
 })
 export class ConfirmComponent implements OnInit {

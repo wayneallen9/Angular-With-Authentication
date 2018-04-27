@@ -7,7 +7,6 @@ import { UserService } from '../../services/user.service';
 
 @Component({
     selector: 'signin',
-    styleUrls: ['./signin.form.component.less'],
     templateUrl:'./signin.form.component.html'
 })
 export class SigninFormComponent implements OnInit {

@@ -5,7 +5,6 @@ import { Observable } from 'rxjs';
 import { UserService } from '../../services/user.service';
 
 @Component({
-    styleUrls: ['./account.component.less'],
     templateUrl: './account.component.html'
 })
 export class AccountComponent implements ComponentCanDeactivate, OnInit {

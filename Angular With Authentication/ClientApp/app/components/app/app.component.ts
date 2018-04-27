@@ -1,8 +1,9 @@
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { UserService } from '../../services/user.service';
 
 @Component({
+    encapsulation: ViewEncapsulation.None,
     selector: 'app',
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.less']

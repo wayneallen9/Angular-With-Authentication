@@ -5,7 +5,6 @@ import { Response } from '@angular/http';
 import { UserService } from '../../services/user.service';
 
 @Component({
-    styleUrls: ['./forgot.component.less'],
     templateUrl: './forgot.component.html'
 })
 export class ForgotComponent implements OnInit {

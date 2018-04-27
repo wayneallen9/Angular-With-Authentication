@@ -9,7 +9,6 @@ import { UserModel } from '../../models/UserModel';
 
 @Component({
     selector: 'register',
-    styleUrls: ['./register.component.less'],
     templateUrl: './register.component.html'
 })
 export class RegisterComponent implements ComponentCanDeactivate, OnInit {
